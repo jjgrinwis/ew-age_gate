@@ -84,6 +84,7 @@ export async function responseProvider (request: EW.ResponseProviderRequest) {
     
     if (age >= minimalAge) {
         // so this dude is old enough, let's set a cookie and update the message
+        // in the akamai property we can check for this cookie and this EW script if old enough
         let cookie = new SetCookie();
         cookie.name = 'old_enough';
         cookie.value = 'yes';

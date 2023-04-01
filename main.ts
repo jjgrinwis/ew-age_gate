@@ -63,11 +63,11 @@ export async function responseProvider (request: EW.ResponseProviderRequest) {
         message: 'You are too young to drink!'
     };
     /*
-    lookup the minimal age for a country in EdgeKV, a distribute key value store.
+    lookup the minimal age for a country in EdgeKV, a distributed key value store.
     This is a very simple datastructure so we could use a local object but just to show EdgeKV as an example
 
     Make sure your access token is still valid: 'akamai edgekv list tokens' 
-    if still valid, download a token via 'akamai edgekv download token --save_path=built/ <token>'.
+    if still valid, download the token via 'akamai edgekv download token --save_path=built/ <token_name>'.
     - You can write some individual items to EdgeKV via:
     'akamai edgekv write text staging|production  <namespace> <groupId> <key> <value>'
     - list all items:
@@ -76,7 +76,7 @@ export async function responseProvider (request: EW.ResponseProviderRequest) {
     `akamai edgekv read item sstaging|production <namespace> <groupId> <key>'
     */
     try {
-        minimalAge = await edgeKv2fa.getJson({ item: countryCode, timeout: edgeKvTimeout })
+        minimalAge = await edgeKv2fa.getJson({ item: countryCode, timeout: edgeKvTimeout }) || minimalAge
         logger.log(`edgekv value: ${minimalAge}`)
     } catch (error) {
         logger.log("something went wrong: %s", error.toString)
@@ -91,8 +91,7 @@ export async function responseProvider (request: EW.ResponseProviderRequest) {
 
         // set cookie in the header. use bracket as property is not known.
         responseHeader['set-cookie'] = cookie.toHeader()
-
-        // update response message
+        
         response.message = 'Welcome, have a drink.'
     }
     
